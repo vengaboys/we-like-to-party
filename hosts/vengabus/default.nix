@@ -10,13 +10,16 @@
     loader.systemd-boot.enable = false;
     loader = {
       efi = {
-        efiSysMountPoint = "/boot/efi"; # ← use the same mount point here.
+        efiSysMountPoint = "/boot/efi";
       };
       grub = {
         enable = true;
         efiSupport = true;
         efiInstallAsRemovable = true;
-        devices = ["/dev/disk/by-id/ata-Micron_1100_MTFDDAK512TBN_18301DC68C94" "/dev/disk/by-id/ata-Micron_1100_MTFDDAK512TBN_18301DC69CA3"];
+        devices = [
+          "/dev/disk/by-id/ata-Micron_1100_MTFDDAK512TBN_18301DC68C94"
+          "/dev/disk/by-id/ata-Micron_1100_MTFDDAK512TBN_18301DC69CA3"
+        ];
         copyKernels = true;
       };
     };
@@ -56,11 +59,9 @@
     defaultGateway = "159.69.59.65";
     defaultGateway6 = { address = "fe80::1"; interface = "enp6s0"; };
     nameservers = [
-      # cloudflare
       "1.1.1.1"
       "2606:4700:4700::1111"
       "2606:4700:4700::1001"
-      # google
       "8.8.8.8"
       "2001:4860:4860::8888"
       "2001:4860:4860::8844"
@@ -69,12 +70,18 @@
 
   users.users.root = {
     initialHashedPassword = "";
-    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUR/dExxJt7KpoYoqSpEb1unetXjI47yQpS5cFH51hM"];
+    openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUR/dExxJt7KpoYoqSpEb1unetXjI47yQpS5cFH51hM"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXjEARc950hpmlCZmFzpjJJ/8WtrnIZxKO3LkQRQYCK"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINc/DDmsDE+KUR1xquEBGIoKbPgLwCbL315XMFP2/XSn"
+    ];
   };
 
   services.openssh = {
     enable = true;
-    permitRootLogin = "prohibit-password";
+    settings = {
+      PermitRootLogin = "prohibit-password";
+    };
   };
 
   system.stateVersion = "23.05"; # Did you read the comment?
