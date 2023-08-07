@@ -78,6 +78,10 @@
     description  = "Alex's Space";
     extraGroups  = [ "wheel" "networkmanager" ];
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXjEARc950hpmlCZmFzpjJJ/8WtrnIZxKO3LkQRQYCK"];
+
+    packages = with pkgs; [
+      speedtest-cli
+    ];
   };
 
   services.openssh = {
