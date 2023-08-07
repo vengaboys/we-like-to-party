@@ -72,6 +72,7 @@
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUR/dExxJt7KpoYoqSpEb1unetXjI47yQpS5cFH51hM"];
   };
 
+# Users
   users.users.alex = {
     isNormalUser  = true;
     home  = "/home/alex";
@@ -82,6 +83,14 @@
     packages = with pkgs; [
       speedtest-cli
     ];
+  };
+
+  users.users.martin = {
+    isNormalUser  = true;
+    home  = "/home/martin";
+    description  = "Hic Sunt Dracones";
+    extraGroups  = [ "wheel" "networkmanager" ];
+    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINc/DDmsDE+KUR1xquEBGIoKbPgLwCbL315XMFP2/XSn"];
   };
 
   services.openssh = {
