@@ -72,6 +72,14 @@
     openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUR/dExxJt7KpoYoqSpEb1unetXjI47yQpS5cFH51hM"];
   };
 
+  users.users.alex = {
+    isNormalUser  = true;
+    home  = "/home/alex";
+    description  = "Alex's Space";
+    extraGroups  = [ "wheel" "networkmanager" ];
+    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXjEARc950hpmlCZmFzpjJJ/8WtrnIZxKO3LkQRQYCK"];
+  };
+
   services.openssh = {
     enable = true;
     permitRootLogin = "prohibit-password";
