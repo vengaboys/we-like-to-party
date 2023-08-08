@@ -68,35 +68,9 @@
     ];
   };
 
-  users.users.root = {
-    initialHashedPassword = "";
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOUR/dExxJt7KpoYoqSpEb1unetXjI47yQpS5cFH51hM"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXjEARc950hpmlCZmFzpjJJ/8WtrnIZxKO3LkQRQYCK"
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINc/DDmsDE+KUR1xquEBGIoKbPgLwCbL315XMFP2/XSn"
-    ];
-  };
+  security.sudo.wheelNeedsPassword = false;
 
-# Users
-  users.users.alex = {
-    isNormalUser  = true;
-    home  = "/home/alex";
-    description  = "Alex's Space";
-    extraGroups  = [ "wheel" "networkmanager" ];
-    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGXjEARc950hpmlCZmFzpjJJ/8WtrnIZxKO3LkQRQYCK"];
-
-    packages = with pkgs; [
-      speedtest-cli
-    ];
-  };
-
-  users.users.martin = {
-    isNormalUser  = true;
-    home  = "/home/martin";
-    description  = "Hic Sunt Dracones";
-    extraGroups  = [ "wheel" "networkmanager" ];
-    openssh.authorizedKeys.keys = ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINc/DDmsDE+KUR1xquEBGIoKbPgLwCbL315XMFP2/XSn"];
-  };
+  services.tailscale.enable = true;
 
   services.openssh = {
     enable = true;
@@ -104,6 +78,10 @@
       PermitRootLogin = "prohibit-password";
     };
   };
+
+  services.zfs.autoScrub.enable = true;
+  services.zfs.autoSnapshot.enable = true;
+  services.zfs.trim.enable = true;
 
   system.stateVersion = "23.05"; # Did you read the comment?
 }
