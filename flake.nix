@@ -8,7 +8,7 @@
     utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs, deploy-rs, home-manager, ... }@inputs:
+  outputs = inputs@{ self, nixpkgs, deploy-rs, home-manager, ... }:
     let
       pkgs = nixpkgs.legacyPackages."x86_64-linux";
 
@@ -22,7 +22,7 @@
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
             })
-          ];
+          ] ++ extraModules;
         };
 
     in {
@@ -33,23 +33,22 @@
       };
 
       nixosConfigurations = {
-        vengabus = nixpkgs.lib.nixosSystem {
-            modules = [ ./hosts/vengabus/default.nix ];
-        };
+        vengabus = mkSystem [ ./hosts/vengabus ];
       };
 
-      deploy.nodes.vengabus = {
-        hostname = "159.69.59.124";
-        sshUser = "root";
-        fastConnection = true;
+      deploy = {
+        nodes.vengabus = {
+          hostname = "159.69.59.124";
+          sshUser = "root";
+          fastConnection = true;
 
-        profiles.system = {
-          user = "root";
-          path = deploy-rs.lib.x86_64-linux.activate.nixos
-            self.nixosConfigurations.vengabus;
+          profiles.system = {
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos
+              self.nixosConfigurations.vengabus;
+          };
         };
       };
-      checks = builtins.mapAttrs
-        (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
+      # checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }
