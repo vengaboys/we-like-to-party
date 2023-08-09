@@ -1,4 +1,4 @@
-name: "checks"
+name: "Run flake checks"
 on:
   pull_request:
     branches:

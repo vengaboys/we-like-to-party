@@ -1,7 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [
-     ./users
-  ];
-}
+  imports = [ ./users ];
 
-# Put generalised common defaults across nodes in here
+  # Put generalised common defaults across nodes in here
+}

@@ -1,11 +1,7 @@
 { pkgs, ... }:
 
 {
-    imports = [
-        ../../home-manager
-    ];
+  imports = [ ../../home-manager ];
 
-    home.packages = with pkgs; [
-        speedtest-cli
-    ];
+  home.packages = with pkgs; [ speedtest-cli ];
 }

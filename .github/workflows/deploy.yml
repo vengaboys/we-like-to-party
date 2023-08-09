@@ -1,0 +1,39 @@
+name: "Deploy with deploy-rs to the node"
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: cachix/install-nix-action@v22
+      with:
+        github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+    - uses: cachix/cachix-action@v12
+      with:
+        name: vengabus
+        authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+    # TODO: Remove this awful thing
+    - uses: webfactory/ssh-agent@v0.7.0
+      with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    # TODO: Remove more awful things
+    - name: Adding Known Hosts
+      run: ssh-keyscan -H 159.69.59.124 >> ~/.ssh/known_hosts
+
+    - if: github.ref == 'refs/heads/main'
+      run: nix run github:serokell/deploy-rs
+
+    - if: github.event_name == 'pull_request'
+      run: nix run github:serokell/deploy-rs -- --dry-activate

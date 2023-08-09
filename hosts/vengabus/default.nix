@@ -1,17 +1,12 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [
-      ./hardware-configuration.nix
-    ];
+  imports = [ ./hardware-configuration.nix ];
 
   boot = {
     loader.systemd-boot.enable = false;
     loader = {
-      efi = {
-        efiSysMountPoint = "/boot/efi";
-      };
+      efi = { efiSysMountPoint = "/boot/efi"; };
       grub = {
         enable = true;
         efiSupport = true;
@@ -36,28 +31,25 @@
   # Set your time zone.
   time.timeZone = "Etc/UTC";
 
-  environment = {
-    systemPackages = with pkgs; [ vim ];
-  };
+  environment = { systemPackages = with pkgs; [ vim ]; };
 
   networking = {
     hostName = "vengabus";
     hostId = "12345678";
     useDHCP = false;
-    interfaces."enp6s0".ipv4.addresses = [
-      {
-        address = "159.69.59.124";
-        prefixLength = 26;
-      }
-    ];
-    interfaces."enp6s0".ipv6.addresses = [
-      {
-        address = "2a01:4f8:231:ae3::1";
-        prefixLength = 64;
-      }
-    ];
+    interfaces."enp6s0".ipv4.addresses = [{
+      address = "159.69.59.124";
+      prefixLength = 26;
+    }];
+    interfaces."enp6s0".ipv6.addresses = [{
+      address = "2a01:4f8:231:ae3::1";
+      prefixLength = 64;
+    }];
     defaultGateway = "159.69.59.65";
-    defaultGateway6 = { address = "fe80::1"; interface = "enp6s0"; };
+    defaultGateway6 = {
+      address = "fe80::1";
+      interface = "enp6s0";
+    };
     nameservers = [
       "1.1.1.1"
       "2606:4700:4700::1111"
@@ -74,9 +66,7 @@
 
   services.openssh = {
     enable = true;
-    settings = {
-      PermitRootLogin = "prohibit-password";
-    };
+    settings = { PermitRootLogin = "prohibit-password"; };
   };
 
   services.zfs.autoScrub.enable = true;
