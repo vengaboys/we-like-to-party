@@ -7,7 +7,7 @@
     virtualHosts."mediumrare.ai" = {
         extraConfig = ''
           reverse_proxy localhost:4000
-          encode gzip zstd
+          encode gzip
           header / {
             X-Content-Type-Options "nosniff"
             X-Frame-Options "sameorigin"
