@@ -1,8 +1,5 @@
-{ ... }:
-{
-    imports = [
-        ../../home-manager
-    ];
+{ ... }: {
+  imports = [ ../../home-manager ];
 
-    # Put personal home-manager/package configuration here
+  # Put personal home-manager/package configuration here
 }
