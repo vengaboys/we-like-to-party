@@ -25,6 +25,7 @@
               home-manager.useUserPackages = true;
             })
             ./common
+            ./services
 
           ] ++ extraModules;
         };
