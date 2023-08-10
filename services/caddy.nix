@@ -1,7 +1,9 @@
 { config, pkgs, lib, modulesPath, ... }:
 
 {
-  age.secrets.alex_cloudflare_api_token.file = ../secrets/alex_cloudflare_api_token.age;
+  config = {
+    age.secrets.alex_cloudflare_api_token.file = ../secrets/alex_cloudflare_api_token.age;
+  };
 
   services.caddy = {
     enable = true;
