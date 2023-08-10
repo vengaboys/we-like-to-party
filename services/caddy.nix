@@ -1,16 +1,23 @@
 { config, pkgs, lib, modulesPath, ... }:
 
 {
-  age.secrets.alex_cloudflare_api_token.file = ../secrets/alex_cloudflare_api_token.age;
+  age.secrets.cloudflare-api-token = {
+    file = ./secrets/cloudflare-api-token.age;
+  };
 
   services.caddy = {
     enable = true;
+    # Something likeike this, you'll need to override the package...
+    # package = (pkgs.callPackage ./something {
+    #   plugins = [ "github.com/caddy-dns/cloudflare" ];
+    #   # vendorSha256 = "";
+    # });
     email = "vengaboys-dev@example.com";
 
     virtualHosts."mediumrare.ai" = {
         extraConfig = ''
           tls {
-            dns cloudflare ${builtins.readFile config.age.secrets.alex_cloudflare_api_token.path}
+            dns cloudflare ${config.age.secrets.cloudflare-api-token.path}
           }
           reverse_proxy localhost:4000
           encode gzip

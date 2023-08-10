@@ -5,9 +5,9 @@ let
 
   users = [ chris martin alex ];
 
-  kimDeployer = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/hujpdZEq6dC53eYfJgOIKOKWKrfjBGv7Hl754js/i";
+  kim = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAID/hujpdZEq6dC53eYfJgOIKOKWKrfjBGv7Hl754js/i";
 in
 {
   "secrets/kim-private-key.age".publicKeys = users;
-  "secrets/alex_cloudflare_api_token.age".publicKeys = [kimDeployer alex];
+  "services/secrets/cloudflare-api-token.age".publicKeys = [kim alex];
 }
