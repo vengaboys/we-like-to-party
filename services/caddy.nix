@@ -1,7 +1,8 @@
 { config, pkgs, lib, modulesPath, ... }:
-let
-  alex_cloudflare_api_key = builtins.readFile config.age.secrets.alex_cloudflare_api_token.path;
-in {
+
+{
+  age.secrets.alex_cloudflare_api_token.file = ../secrets/alex_cloudflare_api_token.age;
+
   services.caddy = {
     enable = true;
     email = "vengaboys-dev@example.com";
@@ -9,7 +10,7 @@ in {
     virtualHosts."mediumrare.ai" = {
         extraConfig = ''
           tls {
-            dns cloudflare ${alex_cloudflare_api_key}
+            dns cloudflare ${builtins.readFile config.age.secrets.alex_cloudflare_api_token.path}
           }
           reverse_proxy localhost:4000
           encode gzip
