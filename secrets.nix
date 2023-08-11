@@ -9,5 +9,5 @@ let
 in
 {
   "secrets/kim-private-key.age".publicKeys = users;
-  "services/secrets/cloudflare-api-token.age".publicKeys = [kim alex];
+  "services/secrets/caddy-environment-file.age".publicKeys = [kim alex];
 }
