@@ -69,8 +69,8 @@ buildGoModule {
 	'';
 
 	postConfigure = ''
-		cp vendor/go.sum ./
-		cp vendor/go.mod ./
+		cp go.sum ./
+		cp go.mod ./
 	'';
 
 
