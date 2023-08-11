@@ -21,20 +21,20 @@ let
     hash = "sha256-fQhujBYyl2p3cdqyf+LVebPBGxXn2lKMB/dsvTo5+NM=";
   };
   imports = flip concatMapStrings plugins (pkg: "\t\t\t_ \"${pkg}\"\n");
-  main = ''
-    		package main
+	main = ''
+		package main
 
-    		import (
-    			caddycmd "github.com/caddyserver/caddy/v2/cmd"
+		import (
+			caddycmd "github.com/caddyserver/caddy/v2/cmd"
 
-    			_ "github.com/caddyserver/caddy/v2/modules/standard"
-    ${imports}
-    		)
+			_ "github.com/caddyserver/caddy/v2/modules/standard"
+${imports}
+		)
 
-    		func main() {
-    			caddycmd.Main()
-    		}
-    	'';
+		func main() {
+			caddycmd.Main()
+		}
+	'';
 in
 buildGoModule {
   pname = "caddy";
