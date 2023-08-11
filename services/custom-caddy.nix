@@ -1,10 +1,13 @@
-{ lib
+{ stdenv
+, lib
 , buildGoModule
 , fetchFromGitHub
 , nixosTests
 , caddy
 , testers
 , installShellFiles
+, plugins ? []
+, vendorSha256 ? ""
 }:
 let
   version = "2.7.3";
