@@ -1,18 +1,19 @@
-{ stdenv, lib, buildGo118Module, nixosTests, plugins ? [ ], fetchFromGitHub
-, vendorSha256 ? "" }:
-
-with lib;
-
+{ lib
+, buildGoModule
+, fetchFromGitHub
+, nixosTests
+, caddy
+, testers
+, installShellFiles
+}:
 let
-  version = "2.6.2";
-
+  version = "2.7.3";
   dist = fetchFromGitHub {
     owner = "caddyserver";
     repo = "dist";
     rev = "v${version}";
-    sha256 = "sha256-bctRc2klaV2JbB4KRWk5n/ACQ/7KlgaMKHae7SIQs+0=";
+    hash = "sha256-fQhujBYyl2p3cdqyf+LVebPBGxXn2lKMB/dsvTo5+NM=";
   };
-
   imports = flip concatMapStrings plugins (pkg: "			_ \"${pkg}\"\n");
 
   main = ''
@@ -29,30 +30,36 @@ let
     			caddycmd.Main()
     		}
     	'';
-
-in buildGo118Module rec {
+in
+buildGoModule {
   pname = "caddy";
   inherit version;
-
-  subPackages = [ "cmd/caddy" ];
 
   src = fetchFromGitHub {
     owner = "caddyserver";
     repo = "caddy";
     rev = "v${version}";
-    sha256 = "sha256-Z9A2DRdX0LWjIKdHAHk2IRxsUzvC90Gf5ohFLXNHcsw=";
+    hash = "sha256-KezKMpx3M7rdKXEWf5XUSXqY5SEimACkv3OB/4XccCE=";
   };
 
-  inherit vendorSha256;
+  vendorHash = "sha256-mTHEM+0yakKiy4ZFi+2qakjSlKFyRkbjeXOXdvx+9lA=";
 
-  overrideModAttrs = (_: {
-    preBuild = ''
-      echo '${main}' > cmd/caddy/main.go
-    '';
-    postInstall = ''
-      cp go.sum go.mod $out/ && ls $out/
-    '';
-  });
+  subPackages = [ "cmd/caddy" ];
+
+  ldflags = [
+    "-s" "-w"
+    "-X github.com/caddyserver/caddy/v2.CustomVersion=${version}"
+  ];
+
+  nativeBuildInputs = [ installShellFiles ];
+	overrideModAttrs = (_: {
+	  preBuild = ''
+	    echo '${main}' > cmd/caddy/main.go
+	  '';
+	  postInstall = ''
+	    cp go.sum go.mod $out/ && ls $out/
+	  '';
+	});
 
   postPatch = ''
     echo '${main}' > cmd/caddy/main.go
@@ -66,16 +73,31 @@ in buildGo118Module rec {
 
   postInstall = ''
     install -Dm644 ${dist}/init/caddy.service ${dist}/init/caddy-api.service -t $out/lib/systemd/system
+
     substituteInPlace $out/lib/systemd/system/caddy.service --replace "/usr/bin/caddy" "$out/bin/caddy"
     substituteInPlace $out/lib/systemd/system/caddy-api.service --replace "/usr/bin/caddy" "$out/bin/caddy"
+
+    $out/bin/caddy manpage --directory manpages
+    installManPage manpages/*
+
+    installShellCompletion --cmd caddy \
+      --bash <($out/bin/caddy completion bash) \
+      --fish <($out/bin/caddy completion fish) \
+      --zsh <($out/bin/caddy completion zsh)
   '';
 
-  passthru.tests = { inherit (nixosTests) caddy; };
+  passthru.tests = {
+    inherit (nixosTests) caddy;
+    version = testers.testVersion {
+      command = "${caddy}/bin/caddy version";
+      package = caddy;
+    };
+  };
 
   meta = with lib; {
     homepage = "https://caddyserver.com";
-    description = "Fast, cross-platform HTTP/2 web server with automatic HTTPS";
+    description = "Fast and extensible multi-platform HTTP/1-2-3 web server with automatic HTTPS";
     license = licenses.asl20;
-    maintainers = with maintainers; [ Br1ght0ne techknowlogick ];
+    maintainers = with maintainers; [ Br1ght0ne emilylange techknowlogick ];
   };
 }
