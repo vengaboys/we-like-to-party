@@ -9,6 +9,9 @@
 , plugins ? []
 , vendorSha256 ? ""
 }:
+
+with lib;
+
 let
   version = "2.7.3";
   dist = fetchFromGitHub {
