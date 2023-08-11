@@ -20,8 +20,7 @@ let
     rev = "v${version}";
     hash = "sha256-fQhujBYyl2p3cdqyf+LVebPBGxXn2lKMB/dsvTo5+NM=";
   };
-  imports = flip concatMapStrings plugins (pkg: "			_ \"${pkg}\"\n");
-
+  imports = flip concatMapStrings plugins (pkg: "\t\t\t_ \"${pkg}\"\n");
   main = ''
     		package main
 
@@ -58,19 +57,22 @@ buildGoModule {
   ];
 
   nativeBuildInputs = [ installShellFiles ];
+
 	overrideModAttrs = (_: {
-	  preBuild = ''
-	    echo '${main}' > cmd/caddy/main.go
-	  '';
-	  postInstall = ''
-	    cp go.sum go.mod $out/ && ls $out/
-	  '';
+		preBuild    = "echo '${main}' > cmd/caddy/main.go";
+		postInstall = "cp go.sum go.mod $out/ && ls $out/";
 	});
 
-  postPatch = ''
-    echo '${main}' > cmd/caddy/main.go
-    cat cmd/caddy/main.go
-  '';
+	postPatch = ''
+		echo '${main}' > cmd/caddy/main.go
+		cat cmd/caddy/main.go
+	'';
+
+	postConfigure = ''
+		cp vendor/go.sum ./
+		cp vendor/go.mod ./
+	'';
+
 
   postInstall = ''
     install -Dm644 ${dist}/init/caddy.service ${dist}/init/caddy-api.service -t $out/lib/systemd/system
