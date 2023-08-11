@@ -72,11 +72,6 @@ buildGoModule {
     cat cmd/caddy/main.go
   '';
 
-  postConfigure = ''
-    cp vendor/go.sum ./
-    cp vendor/go.mod ./
-  '';
-
   postInstall = ''
     install -Dm644 ${dist}/init/caddy.service ${dist}/init/caddy-api.service -t $out/lib/systemd/system
 
