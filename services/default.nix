@@ -1,5 +1,5 @@
 { config, lib, pkgs, ... }: {
-  imports = [ ./caddy.nix ];
+  imports = [ ./caddy ];
 
   # Put generalised common defaults across nodes in here
 }

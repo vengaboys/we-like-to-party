@@ -1,5 +1,10 @@
 { config, pkgs, lib, modulesPath, ... }:
 
+let
+  overlays = [ (import ./caddy-overlay.nix) ];
+  customPkgs = import <nixpkgs> { inherit overlays; };
+  caddy = customPkgs.caddy;
+in
 {
   age.secrets."caddy-environment-file" = {
     file = ./secrets/caddy-environment-file.age;
@@ -7,12 +12,8 @@
 
   services.caddy = {
     enable = true;
-
-     package = (pkgs.callPackage ./custom-caddy.nix {
-       plugins = [ "github.com/caddy-dns/cloudflare" ];
-       vendorSha256 = "sha256-xjwB0Nb0MQw1vd43iJGRgXqJEOC7LK26XoZko9OFvJY=";
-     });
     email = "vengaboys-dev@example.com";
+    package = caddy;
 
     virtualHosts."mediumrare.ai" = {
         extraConfig = ''
