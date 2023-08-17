@@ -2,6 +2,7 @@
 
 {
   imports = [./hardware-configuration.nix];
+	nix.settings.sandbox = false;
 
   boot = {
     loader.systemd-boot.enable = false;
