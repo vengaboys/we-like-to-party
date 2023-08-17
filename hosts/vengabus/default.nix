@@ -26,6 +26,7 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
+    settings.sandbox = false;
   };
 
   # Set your time zone.

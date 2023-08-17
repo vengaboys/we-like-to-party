@@ -1,78 +1,32 @@
-{ lib
-, buildGo118Module
-, fetchFromGitHub
-, nixosTests
-, plugins ? [ ]
-, vendorSha256 ? ""
-, pkgs }:
-let
-  version = "2.5.1";
-  dist = fetchFromGitHub {
-    owner = "caddyserver";
-    repo = "dist";
-    rev = "v${version}";
-    sha256 = "sha256:1nlphjg5wh5drpwkm4cczrkxdzbv72ll7hp5x7z6ww8pzz3q10b3";
-  };
-  imports = lib.flip lib.concatMapStrings plugins (pkg: "	_ \"${pkg}\"\n");
-  main = ''
-    package main
+{ pkgs, config, plugins, ... }:
 
-    import (
-    	caddycmd "github.com/caddyserver/caddy/v2/cmd"
-    	_ "github.com/caddyserver/caddy/v2/modules/standard"
-    ${imports}
-    )
+with pkgs;
 
-    func main() {
-    	caddycmd.Main()
-    }
-  '';
-in buildGo118Module {
+stdenv.mkDerivation rec {
   pname = "caddy";
-  inherit version;
-  runVend = true;
+  version = "2.7.3";
+  dontUnpack = true;
 
-  subPackages = [ "cmd/caddy" ];
+  nativeBuildInputs = [ git go xcaddy ];
 
-  src = fetchFromGitHub {
-    owner = "caddyserver";
-    repo = "caddy";
-    rev = "v${version}";
-    sha256 = "sha256:1nlphjg5wh5drpwkm4cczrkxdzbv72ll7hp5x7z6ww8pzz3q10b3";
-  };
-
-  vendorSha256 = "sha256:082yh6rqr41xwg2xpqg2sdms9m7bw68bc44bgg3xwfbgdbzrs0ni";
-
-  nativeBuildInputs = [ pkgs.breakpointHook ];
-
-  overrideModAttrs = (_: {
-    preBuild = "echo '${main}' > cmd/caddy/main.go";
-    postInstall = "cp go.sum go.mod $out/ && ls $out/";
-  });
-
-  postPatch = ''
-    echo '${main}' > cmd/caddy/main.go
-    cat cmd/caddy/main.go
+  configurePhase = ''
+    export GOCACHE=$TMPDIR/go-cache
+    export GOPATH="$TMPDIR/go"
   '';
 
-  postConfigure = ''
-    cp vendor/go.sum ./
-    cp vendor/go.mod ./
+  buildPhase = let
+    pluginArgs = lib.concatMapStringsSep " " (plugin: "--with ${plugin}") plugins;
+  in ''
+    runHook preBuild
+    ${xcaddy}/bin/xcaddy build latest ${pluginArgs}
+    runHook postBuild
   '';
 
-  postInstall = ''
-    install -Dm644 ${dist}/init/caddy.service ${dist}/init/caddy-api.service -t $out/lib/systemd/system
 
-    substituteInPlace $out/lib/systemd/system/caddy.service --replace "/usr/bin/caddy" "$out/bin/caddy"
-    substituteInPlace $out/lib/systemd/system/caddy-api.service --replace "/usr/bin/caddy" "$out/bin/caddy"
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/bin
+    mv caddy $out/bin
+    runHook postInstall
   '';
-
-  passthru.tests = { inherit (nixosTests) caddy; };
-
-  meta = with lib; {
-    homepage = "https://caddyserver.com";
-    description = "Fast, cross-platform HTTP/2 web server with automatic HTTPS";
-    license = licenses.asl20;
-    maintainers = with maintainers; [ Br1ght0ne techknowlogick ];
-  };
 }
