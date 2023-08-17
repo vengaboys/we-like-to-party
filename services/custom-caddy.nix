@@ -4,7 +4,7 @@ with pkgs;
 
 stdenv.mkDerivation rec {
   pname = "caddy";
-  version = "2.7.3";
+  version = "latest";
   dontUnpack = true;
 
   nativeBuildInputs = [ git go xcaddy ];

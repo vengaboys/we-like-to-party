@@ -2,6 +2,7 @@
 
 {
   imports = [./hardware-configuration.nix];
+	nix.settings.sandbox = false;
 
   boot = {
     loader.systemd-boot.enable = false;
@@ -26,7 +27,6 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    settings.sandbox = false;
   };
 
   # Set your time zone.
