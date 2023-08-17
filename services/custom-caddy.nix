@@ -1,4 +1,10 @@
-{ lib, buildGo118Module, fetchFromGitHub, nixosTests, plugins ? [ ], pkgs }:
+{ lib
+, buildGo118Module
+, fetchFromGitHub
+, nixosTests
+, plugins ? [ ]
+, vendorSha256 ? ""
+, pkgs }:
 let
   version = "2.5.1";
   dist = fetchFromGitHub {
